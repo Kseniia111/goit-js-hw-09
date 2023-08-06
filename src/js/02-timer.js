@@ -10,6 +10,25 @@ const timerMinutes = document.querySelector('[data-minutes]');
 const timerSeconds = document.querySelector('[data-seconds]');
 const timerSpans = document.querySelectorAll('.value');
 
+let timerId = null;
+timerButton.disabled = true;
+
+flatpickr(date, {
+  enableTime: true,
+  time_24hr: true,
+  defaultDate: new Date(),
+  minuteIncrement: 1,
+  onClose(selectedDates) {
+    if (selectedDates[0] <= Date.now()) {
+      Notiflix.Notify.failure('Please choose a date in the future');
+      timerButton.disabled = true;
+    } else {
+      timerButton.disabled = false;
+
+      Notiflix.Notify.success('Lets go?');
+    }
+  },
+});
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
