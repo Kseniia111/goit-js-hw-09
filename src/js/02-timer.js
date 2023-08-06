@@ -13,7 +13,7 @@ const timerSpans = document.querySelectorAll('.value');
 let timerId = null;
 timerButton.disabled = true;
 
-flatpickr(date, {
+flatpickr(timerDate, {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
@@ -30,6 +30,24 @@ flatpickr(date, {
   },
 });
 
+timerButton.addEventListener('click', onTimerButtonStartClick);
+
+function onTimerButtonStartClick() {
+    timerSpans.forEach(item => item.classList.toggle('end'));
+    timerButton.disabled = true;
+    timerDate.disabled = true;
+    timerId = setInterval(() => {
+        const needDate = new Date(date.value);
+        const timeToFinish = needDate - Date.now();
+        const { days, hours, minutes, seconds } = convertMs(timeToFinish);
+
+        if (timeToFinish < 1000) {
+            timerSpans.forEach(item => item.classList.toggle('end'));
+            clearInterval(timerId);
+            date.disabled = false;
+        }
+    }, 1000);
+}
 function convertMs(ms) {
   // Number of milliseconds per unit of time
   const second = 1000;
