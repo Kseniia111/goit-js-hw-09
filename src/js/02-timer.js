@@ -25,8 +25,6 @@ flatpickr(date, {
       btn.disabled = true;
     } else {
       btn.disabled = false;
-
-      Notiflix.Notify.success('Lets go?');
     }
   },
 });
@@ -38,8 +36,8 @@ function onBtnStartClick() {
   btn.disabled = true;
   date.disabled = true;
   timerId = setInterval(() => {
-    const choosenDate = new Date(date.value);
-    const timeToFinish = choosenDate - Date.now();
+    const chosenDate = new Date(date.value);
+    const timeToFinish = chosenDate - Date.now();
     const { days, hours, minutes, seconds } = convertMs(timeToFinish);
 
     day.textContent = addLeadingZero(days);
