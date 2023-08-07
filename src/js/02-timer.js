@@ -1,19 +1,20 @@
-import flatpickr from "flatpickr";
-import "flatpickr/dist/flatpickr.min.css";
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 import Notiflix from 'notiflix';
 
-const timerDate = document.querySelector('#datetime-picker');
-const timerButton = document.querySelector('[data-start]');
-const timerDay = document.querySelector('[data-days]');
-const timerHours = document.querySelector('[data-hours]');
-const timerMinutes = document.querySelector('[data-minutes]');
-const timerSeconds = document.querySelector('[data-seconds]');
-const timerSpans = document.querySelectorAll('.value');
+const date = document.querySelector('#datetime-picker');
+const btn = document.querySelector('[data-start]');
+const day = document.querySelector('[data-days]');
+const hour = document.querySelector('[data-hours]');
+const min = document.querySelector('[data-minutes]');
+const sec = document.querySelector('[data-seconds]');
+const spans = document.querySelectorAll('.value');
 
 let timerId = null;
-timerButton.disabled = true;
 
-flatpickr(timerDate, {
+btn.disabled = true;
+
+flatpickr(date, {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
@@ -21,33 +22,39 @@ flatpickr(timerDate, {
   onClose(selectedDates) {
     if (selectedDates[0] <= Date.now()) {
       Notiflix.Notify.failure('Please choose a date in the future');
-      timerButton.disabled = true;
+      btn.disabled = true;
     } else {
-      timerButton.disabled = false;
+      btn.disabled = false;
 
       Notiflix.Notify.success('Lets go?');
     }
   },
 });
 
-timerButton.addEventListener('click', onTimerButtonStartClick);
+btn.addEventListener('click', onBtnStartClick);
 
-function onTimerButtonStartClick() {
-    timerSpans.forEach(item => item.classList.toggle('end'));
-    timerButton.disabled = true;
-    timerDate.disabled = true;
-    timerId = setInterval(() => {
-        const needDate = new Date(date.value);
-        const timeToFinish = needDate - Date.now();
-        const { days, hours, minutes, seconds } = convertMs(timeToFinish);
+function onBtnStartClick() {
+  spans.forEach(item => item.classList.toggle('end'));
+  btn.disabled = true;
+  date.disabled = true;
+  timerId = setInterval(() => {
+    const choosenDate = new Date(date.value);
+    const timeToFinish = choosenDate - Date.now();
+    const { days, hours, minutes, seconds } = convertMs(timeToFinish);
 
-        if (timeToFinish < 1000) {
-            timerSpans.forEach(item => item.classList.toggle('end'));
-            clearInterval(timerId);
-            date.disabled = false;
-        }
-    }, 1000);
+    day.textContent = addLeadingZero(days);
+    hour.textContent = addLeadingZero(hours);
+    min.textContent = addLeadingZero(minutes);
+    sec.textContent = addLeadingZero(seconds);
+
+    if (timeToFinish < 1000) {
+      spans.forEach(item => item.classList.toggle('end'));
+      clearInterval(timerId);
+      date.disabled = false;
+    }
+  }, 1000);
 }
+
 function convertMs(ms) {
   // Number of milliseconds per unit of time
   const second = 1000;
@@ -67,6 +74,9 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
-console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
-console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
+function addLeadingZero(value) {
+  return `${value}`.padStart(2, '0');
+}
+//console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
+//console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
+//console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
